@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food List Page with Theme Toggle</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        /* General Styling */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #ffffff;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            transition: all 0.3s ease;
+            line-height: 1.6;
+        }
+
+        .navbar {
+            background-color: #000;
+            padding: 20px 30px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar-brand {
+            font-size: 2rem;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .theme-toggle-btn {
+            background-color: #333;
+            color: white;
+            padding: 12px 20px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle-btn:hover {
+            background-color: #555;
+        }
+
+        .container {
+            width: 90%;
+            margin: 50px auto;
+        }
+
+        /* Search Bar */
+        .search-bar {
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .search-bar input {
+            border-radius: 50px;
+            border: 2px solid #333;
+            padding: 14px 30px;
+            width: 50%;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            background-color: #fff;
+        }
+
+        .search-bar input:focus {
+            border-color: #000;
+            box-shadow: 0 0 12px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Card Styling */
+        .food-item {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-radius: 12px;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+            margin-bottom: 30px;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .food-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .food-item img {
+            width: 100%;
+            height: auto;
+        }
+
+        .food-item .card-body {
+            padding: 20px;
+            text-align: center;
+        }
+
+        .food-item .card-title {
+            font-size: 1.6rem;
+            color: #333;
+            font-weight: bold;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+
+        .food-item .card-text {
+            color: #777;
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+        }
+
+        .food-item .btn-primary {
+            background-color: #333;
+            border-color: #333;
+            padding: 12px 25px;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+        }
+
+        .food-item .btn-primary:hover {
+            background-color: #444;
+            border-color: #444;
+            transform: translateY(-2px);
+        }
+
+        /* Dark Mode Styling */
+        .dark-mode {
+            background-color: #121212;
+            color: #fff;
+        }
+
+        /* Dark Mode Food Item Card Styling */
+        .dark-mode .food-item {
+            background-color: #333;
+            color: white;
+        }
+
+        .dark-mode .food-item .card-title {
+            color: white;
+        }
+
+        .dark-mode .food-item .card-text {
+            color: #bbb;
+        }
+
+        .dark-mode .food-item:hover {
+            box-shadow: 0 8px 20px rgba(255, 255, 255, 0.2);
+        }
+
+        .dark-mode .btn-primary {
+            background-color: #444;
+            border-color: #444;
+        }
+
+        .dark-mode .theme-toggle-btn {
+            background-color: #444;
+        }
+
+        /* Card Layout */
+        .row {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        /* Responsive Search Bar */
+        @media (max-width: 768px) {
+            .search-bar input {
+                width: 80%;
+            }
+        }
+
+        .radio-container label {
+            margin: 0 15px;
+            font-size: 1.1rem;
+            cursor: pointer;
+        }
+
+        .radio-container input {
+            margin-right: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="navbar">
+        <div class="navbar-brand">Food List</div>
+        <button class="theme-toggle-btn" onclick="toggleDarkMode()">Toggle Theme</button>
+    </div>
+
+    <div class="container">
+        <!-- Search Bar -->
+        <div class="search-bar">
+            <input type="text" placeholder="Search for food..." id="searchInput">
+        </div>
+
+        <!-- Food Category Radio Buttons -->
+        <div class="radio-container" style="text-align: center; padding: 20px;">
+            <label>
+                <input type="radio" name="category" id="fastFood" checked>
+                <span>Fast Food</span>
+            </label>
+            <label>
+                <input type="radio" name="category" id="drinks">
+                <span>Drinks</span>
+            </label>
+        </div>
+
+        <!-- Food Cards -->
+        <div class="row" id="food-list">
+            <!-- Dynamic Food Items will be added here -->
+        </div>
+    </div>
+
+    <script>
+        // Theme Toggle Function
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+        }
+
+        // Data for Food Items
+        const foodData = [
+            {
+                name: "Burger",
+                description: "A delicious beef burger with cheese and lettuce.",
+                img: "https://via.placeholder.com/300x200?text=Burger",
+                price: "$5.99",
+                category: "fastFood"
+            },
+            {
+                name: "Pizza",
+                description: "A cheesy pizza with tomato sauce and fresh toppings.",
+                img: "https://via.placeholder.com/300x200?text=Pizza",
+                price: "$7.99",
+                category: "fastFood"
+            },
+            {
+                name: "Soda",
+                description: "A refreshing soda to quench your thirst.",
+                img: "https://via.placeholder.com/300x200?text=Soda",
+                price: "$1.99",
+                category: "drinks"
+            }
+            
+        ];
+
+        // Function to create and display food cards
+        function displayFoodItems() {
+            const foodList = document.getElementById("food-list");
+
+            foodData.forEach(item => {
+                const foodItem = document.createElement('div');
+                foodItem.classList.add('col-md-2', 'food-item');
+                foodItem.setAttribute('data-category', item.category);
+
+                foodItem.innerHTML = `
+                    <div class="card food-item">
+                        <img src="${item.img}" class="card-img-top" alt="${item.name}">
+                        <div class="card-body">
+                            <h3 class="card-title">${item.name}</h3>
+                            <p class="card-text">${item.description}</p>
+                            <p class="card-text"><strong>Price: ${item.price}</strong></p>
+                            <button class="btn-primary">Order Now</button>
+                        </div>
+                    </div>
+                `;
+                foodList.appendChild(foodItem);
+            });
+        }
+
+        // Add food items on page load
+        window.onload = function() {
+            displayFoodItems();
+        };
+
+        // Search Filter Functionality
+        document.getElementById('searchInput').addEventListener('input', function () {
+            let searchText = this.value.toLowerCase();
+            let foodItems = document.querySelectorAll('.food-item');
+
+            foodItems.forEach(item => {
+                let title = item.querySelector('.card-title').textContent.toLowerCase();
+                if (title.includes(searchText)) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        });
+
+        // Category Filter Functionality
+        document.querySelectorAll('input[name="category"]').forEach(radio => {
+            radio.addEventListener('change', function () {
+                let selectedCategory = this.id;
+                let foodItems = document.querySelectorAll('.food-item');
+
+                foodItems.forEach(item => {
+                    if (item.getAttribute('data-category') === selectedCategory || selectedCategory === '') {
+                        item.style.display = 'block';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>
