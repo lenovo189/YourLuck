@@ -17,42 +17,34 @@ const firebaseConfig = {
   document.getElementById("contactForm").addEventListener("submit", submitForm);
   
   function submitForm(e) {
-    e.preventDefault();
-  
-    var name = getElementVal("name");
-    var emailid = getElementVal("emailid");
-    var msgContent = getElementVal("msgContent");
-    var protein = getElementVal("protein");
-    var calories = getElementVal("calories");
-    var image = getElementVal("image")
-  
-    saveMessages(name, emailid, msgContent,protein,calories,image);
-  
-    //   enable alert
-    document.querySelector(".alert").style.display = "block";
-  
-    //   remove the alert
-    setTimeout(() => {
-      document.querySelector(".alert").style.display = "none";
-    }, 3000);
-  
-    //   reset the form
-    document.getElementById("contactForm").reset();
-  }
-  
-  const saveMessages = (name, emailid, msgContent,protein,calories,image) => {
-    var newContactForm = contactFormDB.push();
-  
-    newContactForm.set({
-      name: name,
-      emailid: emailid,
-      msgContent: msgContent,
-      protein: protein,
-      calories: calories,
-      image: image
-    });
-  };
-  
-  const getElementVal = (id) => {
-    return document.getElementById(id).value;
-  };
+  e.preventDefault();
+
+  var name = getElementVal("name");
+  var emailid = getElementVal("emailid");
+  var msgContent = getElementVal("msgContent");
+  var protein = getElementVal("protein");
+  var calories = getElementVal("calories");
+  var image = getElementVal("image");
+
+  // Check if the product name already exists
+  contactFormDB.orderByChild("name").equalTo(name).once("value", (snapshot) => {
+    if (snapshot.exists()) {
+      // Product name already exists
+      alert("This product already exists in the database.");
+    } else {
+      // Product name does not exist, proceed to save
+      saveMessages(name, emailid, msgContent, protein, calories, image);
+
+      // Show success alert
+      document.querySelector(".alert").style.display = "block";
+
+      // Remove the alert after 3 seconds
+      setTimeout(() => {
+        document.querySelector(".alert").style.display = "none";
+      }, 3000);
+
+      // Reset the form
+      document.getElementById("contactForm").reset();
+    }
+  });
+}
