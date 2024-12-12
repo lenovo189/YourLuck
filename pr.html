@@ -128,7 +128,40 @@
   </script>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
+
 <body class="bg-gray-100 min-h-screen" style="transition: .5s;">
+  <script>
+    // Function to count the total number of food items
+    function countFoods() {
+      const itemsContainer = document.getElementById("itemsContainer");
+      const foodCount = itemsContainer.children.length; // Count the number of child elements
+  
+      // Display the count dynamically
+      let countDisplay = document.getElementById("foodCountDisplay");
+      if (!countDisplay) {
+        // Create the element if it doesn't exist
+        countDisplay = document.createElement("p");
+        countDisplay.id = "foodCountDisplay";
+        countDisplay.className = "text-center text-lg font-semibold mt-4";
+        itemsContainer.parentNode.insertBefore(countDisplay, itemsContainer);
+      }
+  
+      // Update the count display
+      countDisplay.textContent = `Total Foods: ${foodCount}`;
+    }
+  
+    // Call the countFoods function when the DOM is fully loaded
+    document.addEventListener("DOMContentLoaded", () => {
+      countFoods();
+  
+      // Recalculate the count dynamically when items are added or removed
+      const observer = new MutationObserver(() => countFoods());
+      observer.observe(document.getElementById("itemsContainer"), {
+        childList: true,
+      });
+    });
+  </script>
+  
 
   <header id="header" class="header d-flex align-items-center sticky-top">
     <div class="container-fluid container-xl position-relative d-flex align-items-center">
